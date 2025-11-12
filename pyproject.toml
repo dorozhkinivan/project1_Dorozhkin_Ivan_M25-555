@@ -1,0 +1,24 @@
+[project]
+name = "project1-dorozhkin-ivan-m25-555"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "ivan dorozhkin",email = "dorozhkinIvanK@yandex.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+]
+
+[tool.poetry]
+
+packages = [
+    { include = "labyrinth_game" },
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+project = "labyrinth_game.main:main" 
