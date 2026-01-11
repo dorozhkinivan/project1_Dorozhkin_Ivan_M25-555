@@ -1,5 +1,4 @@
-import constants
-import utils
+from labyrinth_game import constants, utils
 
 
 def get_input(prompt="> "):
@@ -9,15 +8,26 @@ def get_input(prompt="> "):
         print("\nВыход из игры.")
         return "quit"
 
-
 def move_player(game_state, direction):
     current_room = game_state['current_room']
     room_exits = constants.ROOMS[current_room]['exits']
 
     if direction in room_exits:
-        game_state['current_room'] = room_exits[direction]
+        next_room = room_exits[direction]
+        if (next_room == 'treasure_room' and
+                'rusty_key' not in game_state['player_inventory']):
+            print("Дверь заперта. Нужен ключ, чтобы пройти дальше.")
+            return
+
+        game_state['current_room'] = next_room
         game_state['steps_taken'] += 1
+
+        if next_room == 'treasure_room':
+            print("Вы используете найденный ключ, "
+                  "чтобы открыть путь в комнату сокровищ.")
+
         utils.describe_current_room(game_state)
+        utils.random_event(game_state)
     else:
         print("Нельзя пойти в этом направлении.")
 

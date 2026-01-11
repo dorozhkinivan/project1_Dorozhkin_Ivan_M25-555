@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import player_actions
-import utils
+from labyrinth_game import constants, player_actions, utils
 
 
-def process_command(game_state, command_line):
+def process_command(game_state, command_line, commands):
     parts = command_line.split()
     command = parts[0] if parts else ''
 
@@ -14,7 +13,7 @@ def process_command(game_state, command_line):
         case 'inventory':
             player_actions.show_inventory(game_state)
         case 'help':
-            utils.show_help()
+            utils.show_help(commands)
         case 'quit' | 'exit':
             print("До свидания!")
             game_state['game_over'] = True
@@ -40,7 +39,10 @@ def process_command(game_state, command_line):
             else:
                 utils.solve_puzzle(game_state)
         case _:
-            print("Неизвестная команда. Введите 'help' для списка команд.")
+            if command in ['north', 'south', 'east', 'west', 'up']:
+                player_actions.move_player(game_state, command)
+            else:
+                print("Неизвестная команда. Введите 'help' для списка команд.")
 
 def main():
     game_state = {
@@ -55,7 +57,7 @@ def main():
 
     while not game_state['game_over']:
         command = player_actions.get_input()
-        process_command(game_state, command)
+        process_command(game_state, command, constants.COMMANDS)
 
 if __name__ == '__main__':
     main()
