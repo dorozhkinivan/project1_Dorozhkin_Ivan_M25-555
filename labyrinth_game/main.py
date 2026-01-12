@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+"""Основной модуль игры. Содержит точку входа и цикл обработки команд."""
+
 from labyrinth_game import constants, player_actions, utils
 
 
 def process_command(game_state, command_line, commands):
+    """Разбирает строку ввода и вызывает соответствующую функцию действия."""
     parts = command_line.split()
     command = parts[0] if parts else ''
 
@@ -39,12 +42,15 @@ def process_command(game_state, command_line, commands):
             else:
                 utils.solve_puzzle(game_state)
         case _:
-            if command in ['north', 'south', 'east', 'west', 'up']:
+            # Поддержка коротких команд перемещения (north, south...)
+            if command in ['north', 'south', 'east', 'west', 'up', 'down']:
                 player_actions.move_player(game_state, command)
             else:
                 print("Неизвестная команда. Введите 'help' для списка команд.")
 
+
 def main():
+    """Точка входа в игру. Инициализирует состояние и запускает цикл."""
     game_state = {
         'player_inventory': [],
         'current_room': 'entrance',
@@ -58,6 +64,7 @@ def main():
     while not game_state['game_over']:
         command = player_actions.get_input()
         process_command(game_state, command, constants.COMMANDS)
+
 
 if __name__ == '__main__':
     main()

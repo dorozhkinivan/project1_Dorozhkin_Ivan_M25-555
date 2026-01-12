@@ -1,2 +1,8 @@
-.venv
-dist
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+dist/
+.idea/
+*.whl

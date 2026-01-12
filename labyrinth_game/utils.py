@@ -1,15 +1,22 @@
+"""Модуль содержит вспомогательные функции, логику загадок и событий."""
+
 import math
 
 from labyrinth_game import constants, player_actions
 
 
 def pseudo_random(seed, modulo):
+    """
+    Генерирует псевдослучайное число на основе seed.
+    """
     value = math.sin(seed * 12.9898) * 43758.5453
     fractional_part = value - math.floor(value)
     result = int(fractional_part * modulo)
     return result
 
+
 def trigger_trap(game_state):
+    """Активирует ловушку: удаляет случайный предмет или завершает игру."""
     print("Ловушка активирована! Пол стал дрожать...")
     inventory = game_state['player_inventory']
 
@@ -25,8 +32,11 @@ def trigger_trap(game_state):
         else:
             print("Вам удалось уцелеть, несмотря на ловушку.")
 
+
 def random_event(game_state):
+    """Определяет и запускает случайное событие при переходе между комнатами."""
     event_roll = pseudo_random(game_state['steps_taken'], 10)
+    # Вероятность события (примерно 1/10)
     if event_roll != 0:
         return
 
@@ -47,7 +57,9 @@ def random_event(game_state):
             print("Пол начинает опасно трещать под ногами!")
             trigger_trap(game_state)
 
+
 def describe_current_room(game_state):
+    """Выводит описание текущей комнаты, предметы и выходы."""
     room_name = game_state['current_room']
     room = constants.ROOMS[room_name]
 
@@ -63,7 +75,9 @@ def describe_current_room(game_state):
     if room['puzzle'] is not None:
         print("Кажется, здесь есть загадка (используйте команду solve).")
 
+
 def solve_puzzle(game_state):
+    """Обрабатывает логику решения загадки в текущей комнате."""
     room_name = game_state['current_room']
     room = constants.ROOMS[room_name]
 
@@ -75,19 +89,30 @@ def solve_puzzle(game_state):
     print(question)
     user_answer = player_actions.get_input("Ваш ответ: ")
 
+    # Проверка ответа (ответы теперь хранятся в списке)
     if user_answer in correct_answers:
         print("Правильно! Загадка решена.")
         room['puzzle'] = None
+
+        # Награда за загадку в библиотеке
+        if (room_name == 'library' and
+                'treasure_key' not in game_state['player_inventory']):
+            print("Из тайника выпал ключ от сокровищницы (treasure_key)!")
+            game_state['player_inventory'].append('treasure_key')
+
     else:
         print("Неверно. Попробуйте снова.")
         if room_name == 'trap_room':
             trigger_trap(game_state)
 
+
 def attempt_open_treasure(game_state):
+    """Пытается открыть сундук ключом или кодом."""
     room_name = game_state['current_room']
     room = constants.ROOMS[room_name]
 
     if 'treasure_chest' not in room['items']:
+        print("Сундук уже открыт.")
         return
 
     inventory = game_state['player_inventory']
@@ -103,6 +128,7 @@ def attempt_open_treasure(game_state):
         )
         if choice == 'да':
             user_code = player_actions.get_input("Введите код: ")
+            # Проверка кода доступа (puzzle[1] теперь список)
             if user_code in room['puzzle'][1]:
                 print("Код верен! Сундук открывается.")
                 room['items'].remove('treasure_chest')
@@ -113,7 +139,9 @@ def attempt_open_treasure(game_state):
         else:
             print("Вы отступаете от сундука.")
 
+
 def show_help(commands):
+    """Выводит список доступных команд."""
     print("\nДоступные команды:")
     for cmd, desc in commands.items():
         print(f"{cmd:<16} - {desc}")

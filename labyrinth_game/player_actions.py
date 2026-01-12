@@ -1,14 +1,19 @@
+"""Модуль содержит функции, реализующие действия игрока."""
+
 from labyrinth_game import constants, utils
 
 
 def get_input(prompt="> "):
+    """Получает ввод от пользователя, обрабатывает прерывание программы."""
     try:
         return input(prompt).strip().lower()
     except (KeyboardInterrupt, EOFError):
         print("\nВыход из игры.")
         return "quit"
 
+
 def move_player(game_state, direction):
+    """Перемещает игрока в указанном направлении, если это возможно."""
     current_room = game_state['current_room']
     room_exits = constants.ROOMS[current_room]['exits']
 
@@ -31,7 +36,9 @@ def move_player(game_state, direction):
     else:
         print("Нельзя пойти в этом направлении.")
 
+
 def take_item(game_state, item_name):
+    """Добавляет предмет из комнаты в инвентарь игрока."""
     current_room = game_state['current_room']
     room_items = constants.ROOMS[current_room]['items']
 
@@ -42,14 +49,18 @@ def take_item(game_state, item_name):
     else:
         print("Такого предмета здесь нет.")
 
+
 def show_inventory(game_state):
+    """Выводит содержимое инвентаря игрока."""
     inventory = game_state['player_inventory']
     if inventory:
         print("Ваш инвентарь:", ", ".join(inventory))
     else:
         print("Инвентарь пуст.")
 
+
 def use_item(game_state, item_name):
+    """Использует предмет из инвентаря, вызывая специфические эффекты."""
     inventory = game_state['player_inventory']
 
     if item_name not in inventory:
